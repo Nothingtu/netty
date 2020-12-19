@@ -23,7 +23,7 @@ public class ChatClient {
         try {
             selector = Selector.open();
 
-            socketChannel = SocketChannel.open(new InetSocketAddress("127.0.0.1", 9898));
+            socketChannel = SocketChannel.open(new InetSocketAddress("127.0.0.1", 9998));
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_READ);
             System.out.println("data : 用户" + socketChannel.socket().getLocalAddress() + "上线了");
@@ -36,7 +36,7 @@ public class ChatClient {
     public void sendMessage(String message) {
         ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
         try {
-            writeBuffer.put(message.getBytes());
+            writeBuffer.put(message.getBytes("UTF-8"));
             writeBuffer.flip();
             socketChannel.write(writeBuffer);
         } catch (IOException e) {
@@ -80,6 +80,7 @@ public class ChatClient {
 
     public static void main(String[] args) {
         ChatClient chatClient = new ChatClient();
+        System.out.println("客户端启动");
         new Thread() {
             public void run() {
                 while (true) {
@@ -97,6 +98,7 @@ public class ChatClient {
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String msg = scanner.nextLine();
+            System.out.println("读取到的客户端信息："+msg);
             chatClient.sendMessage(msg);
         }
     }

@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * 用这个类来模拟群聊系统（服务端）
+ * 用这个类来模拟群聊系统（服务端） 该代码存在中文乱码的问题
  */
 public class ChatServer {
     private ServerSocketChannel serverSocketChannel;
@@ -24,7 +24,7 @@ public class ChatServer {
             //打开一个服务端的通道，并设置相关的参数状态
             serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.configureBlocking(false);
-            serverSocketChannel.socket().bind(new InetSocketAddress(9898));
+            serverSocketChannel.socket().bind(new InetSocketAddress(9998));
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -33,6 +33,7 @@ public class ChatServer {
 
     //设计一个方法用来监听，是否有事件发生
     public void listen() throws IOException {
+        System.out.println("服务端已启动");
         while (true) {
             int count = selector.select();
             if (count > 0) {//表示有事件发生
@@ -77,7 +78,7 @@ public class ChatServer {
             while(readBuffer.hasRemaining()) {
                 stringBuffer.append((char)readBuffer.get());
             }
-            System.out.println(stringBuffer.toString());
+            System.out.println("data : 用户"+ socketChannel.socket().getRemoteSocketAddress() + " : "+stringBuffer.toString());
             writeData(stringBuffer.toString(),socketChannel);
         } catch (IOException e) {
             //当socketChannel为空时，表示用户下线了
