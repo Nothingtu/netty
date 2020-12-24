@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>test</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var websocket ;
+            //先判断浏览器是否支持websocket
+            if(!window.WebSocket){
+                alert("浏览器当前不支持WebSocket");
+            }else{
+                websocket = new WebSocket("ws://127.0.0.1:9191/test");
+                //设置连接开启的方法
+                websocket.onopen = function (ev) {
+                    var fromServer = document.getElementsByName("fromServer")[0];
+                    fromServer.value = "连接已开启";
+                }
+                //设置关闭的方法
+                websocket.onclose = function (ev){
+                    var fromServer = document.getElementsByName("fromServer")[0];
+                    fromServer.value = fromServer.value + "\n" + "连接已关闭";
+                }
+                //设置接收数据的方法
+                websocket.onmessage = function (ev) {
+                    var fromServer = document.getElementsByName("fromServer")[0];
+                    fromServer.value = fromServer.value + "\n" + ev.data;
+
+                }
+                //设置处理错误的方法
+                websocket.onerror =function (ev) {}
+            }
+
+            function send(message){
+                //判断websocket是否已经创建
+                if(!window.websocket){return;}
+
+                //判断websocket当前的状态readystate
+                // OPEN表示连接一打开，可以正常通信  CONNECTING 表示正在连接
+                // CLOSING表示正在关闭            CLOSED表示关闭或者打开连接失败
+                if(websocket.readyState = websocket.OPEN) websocket.send(message);
+                else{
+                    alert("连接未开启");
+                }
+
+            }
+        </script>
+        <form name="form" onsubmit="return false">
+            <textarea name="message" style="height: 400px; width: 300px;"></textarea>
+            <input type="button" value="发送" onclick="send(this.form.message.value)">
+            <textarea name="fromServer" style="height: 400px ;width : 300px"></textarea>
+        </form>
+    </body>
+</html>
